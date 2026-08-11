@@ -1,12 +1,12 @@
 [
   {
     "id": 1,
-    "company": "测试公司",
-    "title": "Python后端实习生",
+    "company": "字节跳动",
+    "title": "Python开发实习生",
     "city": "北京",
-    "url": "",
+    "url": "https://example.com",
     "status": "待投递",
-    "note": "",
-    "created_at": "2026-08-10T15:54:37"
+    "note": "第一次测试",
+    "created_at": "2026-08-11T14:11:24"
   }
 ]
