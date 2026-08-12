@@ -23,18 +23,15 @@ Job Assistant 是一个使用 Python 编写的命令行求职岗位管理工具�
 
 ## 支持的投递状态
 
-```text
 待投递
 已投递
 笔试
 面试
 已拒绝
 已入职
-```
 
 ## 项目结构
 
-```text
 github-project/
 ├─ app/
 │  ├─ __init__.py
@@ -51,7 +48,6 @@ github-project/
 ├─ .gitignore
 ├─ README.md
 └─ requirements.txt
-```
 
 ## 环境要求
 
@@ -62,42 +58,31 @@ github-project/
 
 ### 1. 克隆项目
 
-```powershell
-git clone <你的 GitHub 仓库地址>
-cd github-project
-```
+git clone https://github.com/Lyj1204-hub/job-assistant.git
+cd job-assistant
 
 ### 2. 创建虚拟环境
 
-```powershell
 python -m venv .venv
-```
+
 
 ### 3. 激活虚拟环境
 
 Windows PowerShell：
 
-```powershell
 .\.venv\Scripts\Activate.ps1
-```
 
 ### 4. 安装依赖
 
-```powershell
 pip install -r requirements.txt
-```
+
 
 ## 运行方式
 
 在项目根目录运行：
-
-```powershell
 python -m app.main
-```
 
 程序启动后会显示菜单：
-
-```text
 ====== Job Assistant ======
 1. 新增岗位
 2. 查看全部岗位
@@ -105,7 +90,6 @@ python -m app.main
 4. 修改投递状态
 5. 删除岗位
 0. 退出
-```
 
 根据提示输入数字即可操作。
 
@@ -113,9 +97,7 @@ python -m app.main
 
 运行全部自动化测试：
 
-```powershell
 python -m pytest -q
-```
 
 测试覆盖以下内容：
 
@@ -135,13 +117,9 @@ python -m pytest -q
 ## 数据保存说明
 
 岗位数据默认保存到：
-
-```text
 data/jobs.json
-```
 
 程序重新启动后，之前保存的岗位数据仍然可以读取。
-
 该文件仅建议保存示例数据，不建议上传真实岗位链接、个人联系方式或其他隐私信息。
 
 ## 技术栈
