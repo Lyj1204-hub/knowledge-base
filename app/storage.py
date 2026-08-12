@@ -22,7 +22,10 @@ class JobStorage:
         if not content:
             return []
 
-        data = json.loads(content)
+        try:
+            data = json.loads(content)
+        except json.JSONDecodeError as exc:
+            raise ValueError("岗位数据文件格式错误，请检查 data/jobs.json") from exc
 
         if not isinstance(data, list):
             raise ValueError("JSON文件内容必须是列表")

@@ -1,5 +1,6 @@
 from app.models import Job
 from app.storage import JobStorage
+import pytest
 
 
 def create_job() -> Job:
@@ -51,3 +52,13 @@ def test_empty_file_returns_empty_list(tmp_path):
     storage = JobStorage(file_path)
 
     assert storage.load() == []
+
+
+def test_invalid_json_has_clear_error(tmp_path):
+    file_path = tmp_path / "jobs.json"
+    file_path.write_text("这不是合法的 JSON", encoding="utf-8")
+
+    storage = JobStorage(file_path)
+
+    with pytest.raises(ValueError, match="格式错误"):
+        storage.load()
