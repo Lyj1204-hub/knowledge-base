@@ -1,22 +1,22 @@
 from dataclasses import asdict, dataclass
+from typing import ClassVar
 from datetime import datetime
 from typing import Any
 
 
-VALID_STATUSES = (
-    "待投递",
-    "已投递",
-    "笔试",
-    "一面",
-    "二面",
-    "Offer",
-    "拒绝",
-    "已结束",
-)
+VALID_STATUSES = {"待投递", "已投递", "笔试", "面试", "已拒绝", "已入职"}
 
 
 @dataclass
 class Job:
+    VALID_STATUSES: ClassVar[set[str]] = {
+        "待投递",
+        "已投递",
+        "笔试",
+        "面试",
+        "已拒绝",
+        "已入职",
+    }
     id: int
     company: str
     title: str

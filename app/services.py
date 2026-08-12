@@ -40,6 +40,9 @@ class JobService:
         return [job for job in jobs if job.status == status]
 
     def update_status(self, job_id: int, status: str) -> Job | None:
+        if status not in Job.VALID_STATUSES:
+            raise ValueError(f"不支持的投递状态：{status}")
+
         jobs = self.storage.load()
 
         for job in jobs:

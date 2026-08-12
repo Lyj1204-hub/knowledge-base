@@ -65,15 +65,23 @@ def main():
                 job_id = int(input("岗位编号："))
                 status = input("新状态：")
 
-                service.update_status(job_id, status)
-                print("状态修改成功")
+                job = service.update_status(job_id, status)
+
+                if job is None:
+                    print("没有找到这个岗位")
+                else:
+                    print("状态修改成功")
 
             elif choice == "5":
                 job_id = int(input("岗位编号："))
 
-                service.delete_job(job_id)
-                print("删除成功")
+                result = service.delete_job(job_id)
 
+                if result:
+                    print("删除成功")
+                else:
+                    print("没有找到这个岗位")
+                    
             elif choice == "0":
                 print("程序退出")
                 break
