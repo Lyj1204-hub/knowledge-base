@@ -34,7 +34,7 @@ def test_invalid_status_rejected(tmp_path):
         service(tmp_path).add_note("标题", "内容", "Python", status="错误状态")
 
 
-def test_delete_job_and_missing_id(tmp_path):
+def test_delete_note_and_missing_id(tmp_path):
     s = service(tmp_path)
     item = s.add_note("Docker", "容器", "后端")
     assert s.delete_note(item.id) is True
