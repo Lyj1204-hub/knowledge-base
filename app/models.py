@@ -1,51 +1,38 @@
 from dataclasses import asdict, dataclass
-from typing import ClassVar
 from datetime import datetime
-from typing import Any
-
-
-VALID_STATUSES = {"待投递", "已投递", "笔试", "面试", "已拒绝", "已入职"}
+from typing import Any, ClassVar
 
 
 @dataclass
-class Job:
-    VALID_STATUSES: ClassVar[set[str]] = {
-        "待投递",
-        "已投递",
-        "笔试",
-        "面试",
-        "已拒绝",
-        "已入职",
-    }
+class Note:
+    """A learning note stored by the application."""
+
+    VALID_STATUSES: ClassVar[set[str]] = {"未开始", "学习中", "已掌握", "待复习"}
+
     id: int
-    company: str
     title: str
-    city: str
-    url: str = ""
-    status: str = "待投递"
-    note: str = ""
+    content: str
+    category: str
+    source_url: str = ""
+    status: str = "未开始"
+    summary: str = ""
     created_at: str = ""
 
     def __post_init__(self) -> None:
-        if not self.company.strip():
-            raise ValueError("公司名称不能为空")
-
         if not self.title.strip():
-            raise ValueError("岗位名称不能为空")
-
-        if self.status not in VALID_STATUSES:
-            raise ValueError(f"不支持的投递状态：{self.status}")
-
+            raise ValueError("笔记标题不能为空")
+        if not self.content.strip():
+            raise ValueError("笔记内容不能为空")
+        if not self.category.strip():
+            raise ValueError("笔记分类不能为空")
+        if self.status not in self.VALID_STATUSES:
+            raise ValueError(f"不支持的学习状态：{self.status}")
         if not self.created_at:
-            self.created_at = self.now()
+            self.created_at = datetime.now().isoformat(timespec="seconds")
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Job":
+    def from_dict(cls, data: dict[str, Any]) -> "Note":
         return cls(**data)
-
-    @staticmethod
-    def now() -> str:
-        return datetime.now().isoformat(timespec="seconds")
