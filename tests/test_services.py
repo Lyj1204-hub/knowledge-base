@@ -1,91 +1,41 @@
-from app.services import JobService
-from app.storage import JobStorage
+import pytest
+
+from app.services import NoteService
+from app.storage import NoteStorage
 
 
-def create_service(tmp_path):
-    file_path = tmp_path / "jobs.json"
-    storage = JobStorage(file_path)
-    return JobService(storage)
+def service(tmp_path):
+    return NoteService(NoteStorage(tmp_path / "notes.json"))
 
 
-def test_add_job(tmp_path):
-    service = create_service(tmp_path)
-
-    job = service.add_job(
-        company="字节跳动",
-        title="Python开发实习生",
-        city="北京",
-        url="https://example.com",
-        note="测试岗位",
-    )
-
-    assert job.id == 1
-    assert job.company == "字节跳动"
-
-    jobs = service.list_jobs()
-    assert len(jobs) == 1
+def test_add_and_list(tmp_path):
+    item = service(tmp_path).add_note("Python", "学习函数", "Python")
+    assert item.id == 1
+    assert len(service(tmp_path).list_notes()) == 1
 
 
-def test_list_jobs_by_status(tmp_path):
-    service = create_service(tmp_path)
-
-    service.add_job(
-        company="腾讯",
-        title="后端开发实习生",
-        city="深圳",
-        url="https://example.com",
-        status="待投递",
-    )
-
-    service.add_job(
-        company="阿里巴巴",
-        title="Python实习生",
-        city="杭州",
-        url="https://example.com",
-        status="已投递",
-    )
-
-    jobs = service.list_jobs("已投递")
-
-    assert len(jobs) == 1
-    assert jobs[0].company == "阿里巴巴"
+def test_filter_by_category_and_status(tmp_path):
+    s = service(tmp_path)
+    s.add_note("Python", "函数", "Python", status="学习中")
+    s.add_note("Git", "提交", "工具")
+    assert len(s.list_notes(category="Python")) == 1
+    assert len(s.list_notes(status="学习中")) == 1
 
 
-def test_update_status(tmp_path):
-    service = create_service(tmp_path)
-
-    job = service.add_job(
-        company="百度",
-        title="算法实习生",
-        city="北京",
-        url="https://example.com",
-    )
-
-    updated_job = service.update_status(job.id, "已投递")
-
-    assert updated_job is not None
-    assert updated_job.status == "已投递"
+def test_update_status_and_missing_id(tmp_path):
+    s = service(tmp_path)
+    item = s.add_note("SQL", "查询", "数据库")
+    assert s.update_status(item.id, "已掌握").status == "已掌握"
+    assert s.update_status(999, "已掌握") is None
 
 
-def test_delete_job(tmp_path):
-    service = create_service(tmp_path)
-
-    job = service.add_job(
-        company="京东",
-        title="后端实习生",
-        city="北京",
-        url="https://example.com",
-    )
-
-    result = service.delete_job(job.id)
-
-    assert result is True
-    assert service.list_jobs() == []
+def test_invalid_status_rejected(tmp_path):
+    with pytest.raises(ValueError, match="学习状态"):
+        service(tmp_path).add_note("标题", "内容", "Python", status="错误状态")
 
 
-def test_delete_nonexistent_job(tmp_path):
-    service = create_service(tmp_path)
-
-    result = service.delete_job(999)
-
-    assert result is False
+def test_delete_job_and_missing_id(tmp_path):
+    s = service(tmp_path)
+    item = s.add_note("Docker", "容器", "后端")
+    assert s.delete_note(item.id) is True
+    assert s.delete_note(999) is False
