@@ -1,97 +1,60 @@
-from .services import JobService
-from .storage import JobStorage
+from .services import NoteService
+from .storage import NoteStorage
 
 
-def hello():
-    return "Hello, Job Assistant!"
-
-
-def print_jobs(jobs):
-    if not jobs:
-        print("暂无岗位记录")
+def print_notes(notes) -> None:
+    if not notes:
+        print("暂无笔记记录")
         return
-
-    for job in jobs:
-        print(
-            f"[{job.id}] "
-            f"{job.company} | "
-            f"{job.title} | "
-            f"{job.city} | "
-            f"{job.status}"
-        )
+    print("\n笔记列表：")
+    for note in notes:
+        print(f"[{note.id}] {note.title} | {note.category} | {note.status}")
 
 
-def main():
-    service = JobService(JobStorage())
-
+def run_menu() -> None:
+    service = NoteService(NoteStorage())
     while True:
-        print("\n===== Job Assistant =====")
-        print("1. 新增岗位")
-        print("2. 查看全部岗位")
-        print("3. 按状态查看")
-        print("4. 修改投递状态")
-        print("5. 删除岗位")
+        print("\n===== Knowledge Base =====")
+        print("1. 新增笔记")
+        print("2. 查看全部笔记")
+        print("3. 按分类查看")
+        print("4. 按状态查看")
+        print("5. 修改学习状态")
+        print("6. 删除笔记")
         print("0. 退出")
-
         choice = input("请选择：").strip()
-
         try:
             if choice == "1":
-                company = input("公司名称：")
-                title = input("岗位名称：")
-                city = input("城市：")
-                url = input("岗位链接：")
-                note = input("备注：")
-
-                job = service.add_job(
-                    company=company,
-                    title=title,
-                    city=city,
-                    url=url,
-                    status="待投递",
-                    note=note,
+                note = service.add_note(
+                    title=input("笔记标题：").strip(),
+                    content=input("笔记内容：").strip(),
+                    category=input("笔记分类：").strip(),
+                    source_url=input("参考链接（可留空）：").strip(),
+                    summary=input("个人总结（可留空）：").strip(),
                 )
-
-                print(f"新增成功，岗位编号为 {job.id}")
-
+                print(f"新增成功，笔记编号是：{note.id}")
             elif choice == "2":
-                print_jobs(service.list_jobs())
-
+                print_notes(service.list_notes())
             elif choice == "3":
-                status = input("请输入状态：")
-                print_jobs(service.list_jobs(status))
-
+                print_notes(service.list_notes(category=input("分类：").strip()))
             elif choice == "4":
-                job_id = int(input("岗位编号："))
-                status = input("新状态：")
-
-                job = service.update_status(job_id, status)
-
-                if job is None:
-                    print("没有找到这个岗位")
-                else:
-                    print("状态修改成功")
-
+                print_notes(service.list_notes(status=input("学习状态：").strip()))
             elif choice == "5":
-                job_id = int(input("岗位编号："))
-
-                result = service.delete_job(job_id)
-
-                if result:
-                    print("删除成功")
-                else:
-                    print("没有找到这个岗位")
-                    
+                note_id = int(input("笔记编号："))
+                status = input("新学习状态：").strip()
+                note = service.update_status(note_id, status)
+                print("学习状态修改成功" if note else "没有找到这个笔记")
+            elif choice == "6":
+                note_id = int(input("笔记编号："))
+                print("删除成功" if service.delete_note(note_id) else "没有找到这个笔记")
             elif choice == "0":
-                print("程序退出")
+                print("程序已退出")
                 break
-
             else:
-                print("无效选项")
-
-        except ValueError as error:
-            print(f"操作失败：{error}")
+                print("请输入 0 到 6 之间的数字")
+        except ValueError as exc:
+            print(f"操作失败：{exc}")
 
 
 if __name__ == "__main__":
-    main()
+    run_menu()
