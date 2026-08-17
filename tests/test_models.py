@@ -1,63 +1,28 @@
 import pytest
 
-from app.models import Job
+from app.models import Note
 
 
-def test_create_job():
-    job = Job(
-        id=1,
-        company="测试公司",
-        title="Python后端实习生",
-        city="北京",
-    )
-
-    assert job.id == 1
-    assert job.company == "测试公司"
-    assert job.title == "Python后端实习生"
-    assert job.status == "待投递"
-    assert job.created_at != ""
+def test_note_creation_and_default_status():
+    note = Note(1, "Python 类型注解", "记录类型注解的作用", "Python")
+    assert note.status == "未开始"
 
 
-def test_job_to_dict_and_from_dict():
-    job = Job(
-        id=1,
-        company="测试公司",
-        title="Python后端实习生",
-        city="北京",
-    )
-
-    data = job.to_dict()
-    restored_job = Job.from_dict(data)
-
-    assert restored_job == job
+def test_note_to_dict_and_from_dict():
+    note = Note(1, "Git", "记录常用命令", "工具")
+    assert Note.from_dict(note.to_dict()) == note
 
 
-def test_empty_company_is_rejected():
-    with pytest.raises(ValueError):
-        Job(
-            id=1,
-            company="",
-            title="Python后端实习生",
-            city="北京",
-        )
+def test_empty_title_rejected():
+    with pytest.raises(ValueError, match="标题"):
+        Note(1, "", "内容", "Python")
 
 
-def test_empty_title_is_rejected():
-    with pytest.raises(ValueError):
-        Job(
-            id=1,
-            company="测试公司",
-            title="",
-            city="北京",
-        )
+def test_empty_content_rejected():
+    with pytest.raises(ValueError, match="内容"):
+        Note(1, "标题", "", "Python")
 
 
-def test_invalid_status_is_rejected():
-    with pytest.raises(ValueError):
-        Job(
-            id=1,
-            company="测试公司",
-            title="Python后端实习生",
-            city="北京",
-            status="错误状态",
-        )
+def test_invalid_status_rejected():
+    with pytest.raises(ValueError, match="学习状态"):
+        Note(1, "标题", "内容", "Python", status="错误状态")
